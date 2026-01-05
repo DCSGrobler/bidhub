@@ -1,0 +1,1383 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>BidHub</title>
+  <style>
+    :root{
+      --bg:#f5f6f8;
+      --surface:#ffffff;
+      --text:#1f2937;
+      --muted:#6b7280;
+      --border:#e5e7eb;
+      --accent:#2563eb;
+      --accent-2:#0f766e;
+      --danger:#b91c1c;
+      --shadow:0 2px 12px rgba(0,0,0,.06);
+      --radius:14px;
+      --radius2:18px;
+      --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    }
+
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      font-family:var(--font);
+      color:var(--text);
+      background:var(--bg);
+    }
+
+    a{ color:var(--accent); text-decoration:none; }
+    a:hover{ text-decoration:underline; }
+
+    .topbar{
+      position:sticky;
+      top:0;
+      z-index:10;
+      background:rgba(255,255,255,.85);
+      backdrop-filter: blur(10px);
+      border-bottom:1px solid var(--border);
+    }
+
+    .topbar-inner{
+      max-width:1100px;
+      margin:0 auto;
+      padding:14px 18px;
+      display:flex;
+      align-items:center;
+      gap:12px;
+    }
+
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      min-width:260px;
+    }
+
+    .logo{
+      width:42px;
+      height:42px;
+      border-radius:18px;
+      background:#eef2ff;
+      border:1px solid #e0e7ff;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-weight:800;
+      color:#3730a3;
+      letter-spacing:.5px;
+      user-select:none;
+    }
+
+    .brand-title{ font-weight:700; font-size:14px; line-height:1.1; }
+    .brand-sub{ color:var(--muted); font-size:12px; margin-top:2px; }
+
+    .actions{
+      margin-left:auto;
+      display:flex;
+      align-items:center;
+      gap:10px;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+    }
+
+    .btn{
+      appearance:none;
+      border:1px solid var(--border);
+      background:var(--surface);
+      color:var(--text);
+      border-radius:12px;
+      padding:10px 12px;
+      font-size:13px;
+      cursor:pointer;
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      box-shadow:0 1px 0 rgba(0,0,0,.02);
+    }
+
+    .btn:hover{ border-color:#d1d5db; }
+    .btn.primary{ background:var(--accent); color:#fff; border-color:var(--accent); }
+    .btn.primary:hover{ filter:brightness(.95); }
+    .btn.ghost{ background:transparent; border-color:transparent; }
+    .btn.ghost:hover{ background:rgba(0,0,0,.04); border-color:transparent; }
+    .btn.danger{ background:#fff; color:var(--danger); border-color:#fecaca; }
+    .btn.danger:hover{ background:#fef2f2; }
+
+    .container{
+      max-width:1100px;
+      margin:0 auto;
+      padding:18px;
+    }
+
+    .grid-3{
+      display:grid;
+      grid-template-columns:repeat(3, 1fr);
+      gap:12px;
+    }
+
+    @media (max-width: 900px){
+      .grid-3{ grid-template-columns:1fr; }
+      .brand{ min-width:auto; }
+    }
+
+    .card{
+      background:var(--surface);
+      border:1px solid var(--border);
+      border-radius:var(--radius2);
+      box-shadow:var(--shadow);
+    }
+
+    .card-inner{ padding:14px; }
+    .card-h{
+      padding:16px 16px 10px 16px;
+      border-bottom:1px solid var(--border);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+    }
+
+    .card-title{ font-size:14px; font-weight:700; }
+
+    .kpi-label{ color:var(--muted); font-size:12px; }
+    .kpi-value{ font-size:26px; font-weight:800; margin-top:6px; }
+    .kpi-hint{ color:var(--muted); font-size:12px; margin-top:6px; }
+
+    .filters{
+      display:grid;
+      grid-template-columns: 1.6fr repeat(4, 1fr);
+      gap:10px;
+    }
+
+    @media (max-width: 1000px){
+      .filters{ grid-template-columns:1fr 1fr; }
+    }
+
+    .field label{
+      display:block;
+      font-size:12px;
+      color:var(--muted);
+      margin-bottom:6px;
+    }
+
+    input, select, textarea{
+      width:100%;
+      border:1px solid var(--border);
+      border-radius:12px;
+      padding:10px 10px;
+      font-size:13px;
+      outline:none;
+      background:#fff;
+      color:var(--text);
+    }
+
+    input:focus, select:focus, textarea:focus{ border-color:#c7d2fe; box-shadow:0 0 0 3px rgba(99,102,241,.15); }
+    textarea{ resize:vertical; min-height:110px; }
+
+    .muted{ color:var(--muted); }
+    .sep{ height:1px; background:var(--border); margin:14px 0; }
+
+    .table-wrap{ overflow:auto; border-radius:14px; border:1px solid var(--border); }
+    table{ width:100%; border-collapse:collapse; min-width:920px; }
+    th, td{ padding:12px 12px; border-bottom:1px solid var(--border); text-align:left; font-size:13px; }
+    th{ background:#fafafa; color:var(--muted); font-weight:700; font-size:12px; }
+    tr:hover td{ background:#fafafa; }
+
+    .rowlink{ cursor:pointer; }
+
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      padding:4px 8px;
+      border-radius:999px;
+      font-size:12px;
+      border:1px solid var(--border);
+      background:#fff;
+      color:var(--text);
+      white-space:nowrap;
+    }
+
+    .badge.secondary{ background:#f3f4f6; }
+    .badge.success{ border-color:#bbf7d0; background:#f0fdf4; color:#166534; }
+    .badge.warn{ border-color:#fde68a; background:#fffbeb; color:#92400e; }
+    .badge.low{ border-color:#e5e7eb; background:#f9fafb; color:var(--muted); }
+
+    .pillbar{ display:flex; gap:6px; flex-wrap:wrap; }
+
+    .right{ text-align:right; }
+
+    .tabs{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      padding:0 16px 12px 16px;
+    }
+
+    .tab{
+      border:1px solid var(--border);
+      background:#fff;
+      border-radius:999px;
+      padding:8px 12px;
+      font-size:13px;
+      cursor:pointer;
+    }
+
+    .tab.active{
+      background:#eef2ff;
+      border-color:#c7d2fe;
+      color:#3730a3;
+      font-weight:700;
+    }
+
+    .detail-grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:14px;
+      padding:0 16px 16px 16px;
+    }
+
+    @media (max-width: 900px){
+      .detail-grid{ grid-template-columns:1fr; }
+      table{ min-width:780px; }
+    }
+
+    .modal-backdrop{
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,.35);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding:18px;
+      z-index:50;
+    }
+
+    .modal{
+      width:min(880px, 100%);
+      background:#fff;
+      border-radius:18px;
+      border:1px solid var(--border);
+      box-shadow:0 20px 60px rgba(0,0,0,.18);
+      overflow:hidden;
+    }
+
+    .modal .content{ padding:16px; }
+
+    .alert{
+      border:1px solid var(--border);
+      background:#fafafa;
+      border-radius:14px;
+      padding:12px;
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.4;
+    }
+
+    .footer{
+      max-width:1100px;
+      margin:0 auto;
+      padding:18px;
+      color:var(--muted);
+      font-size:12px;
+    }
+
+    .hide{ display:none !important; }
+
+    .toast{
+      position:fixed;
+      right:18px;
+      bottom:18px;
+      background:#111827;
+      color:#fff;
+      padding:10px 12px;
+      border-radius:12px;
+      box-shadow:0 10px 30px rgba(0,0,0,.25);
+      font-size:13px;
+      opacity:0;
+      transform:translateY(6px);
+      transition:opacity .18s ease, transform .18s ease;
+      z-index:60;
+      max-width:420px;
+    }
+
+    .toast.show{ opacity:1; transform:translateY(0); }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">
+        <div class="logo">BH</div>
+        <div>
+          <div class="brand-title">BidHub</div>
+          <div class="brand-sub">Bid management workspace</div>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button id="backBtn" class="btn ghost hide" type="button">Back</button>
+        <button id="newBtn" class="btn primary" type="button">New bid</button>
+        <button id="exportBtn" class="btn" type="button">Export JSON</button>
+        <button id="importBtn" class="btn" type="button">Import JSON</button>
+        <button id="clearBtn" class="btn danger" type="button">Clear all</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- LIST VIEW -->
+    <section id="listView">
+      <div class="grid-3">
+        <div class="card"><div class="card-inner">
+          <div class="kpi-label">In progress</div>
+          <div id="kpiInProgress" class="kpi-value">0</div>
+        </div></div>
+        <div class="card"><div class="card-inner">
+          <div class="kpi-label">Closed</div>
+          <div id="kpiClosed" class="kpi-value">0</div>
+        </div></div>
+        <div class="card"><div class="card-inner">
+          <div class="kpi-label">Due in 14 days</div>
+          <div id="kpiDueSoon" class="kpi-value">0</div>
+          <div class="kpi-hint">Only in-progress bids</div>
+        </div></div>
+      </div>
+
+      <div class="card" style="margin-top:12px;">
+        <div class="card-h">
+          <div class="card-title">Bids</div>
+          <div class="muted" style="font-size:12px;">Showing <span id="showCount" style="font-weight:700; color:var(--text);">0</span> of <span id="totalCount">0</span></div>
+        </div>
+        <div class="card-inner">
+          <div class="filters">
+            <div class="field">
+              <label for="q">Search</label>
+              <input id="q" placeholder="Search bids, clients, IDs, tags..." />
+            </div>
+            <div class="field">
+              <label for="status">Status</label>
+              <select id="status"></select>
+            </div>
+            <div class="field">
+              <label for="stage">Stage</label>
+              <select id="stage"></select>
+            </div>
+            <div class="field">
+              <label for="owner">Owner</label>
+              <select id="owner"></select>
+            </div>
+            <div class="field">
+              <label for="sort">Sort</label>
+              <select id="sort">
+                <option value="updated_desc">Updated (newest)</option>
+                <option value="updated_asc">Updated (oldest)</option>
+                <option value="due_asc">Due date</option>
+                <option value="value_desc">Value (high to low)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="sep"></div>
+
+          <div class="filters" style="grid-template-columns: 1fr 1fr;">
+            <div class="field">
+              <label for="tag">Tag filter</label>
+              <select id="tag"></select>
+            </div>
+            <div class="field" style="display:flex; align-items:flex-end; justify-content:flex-end;">
+              <div class="muted" style="font-size:12px;">Tip: use Export JSON to back up or share.</div>
+            </div>
+          </div>
+
+          <div class="sep"></div>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th style="width:36%">Bid</th>
+                  <th>Client</th>
+                  <th>Stage</th>
+                  <th>Status</th>
+                  <th>Due</th>
+                  <th class="right">Value</th>
+                </tr>
+              </thead>
+              <tbody id="bidRows"></tbody>
+            </table>
+          </div>
+
+          <div style="margin-top:12px;" class="alert">
+            <strong style="color:var(--text);">Local-first</strong><br />
+            Your data is stored in this browser (localStorage). Hosting this file will not automatically create shared data across users.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- DETAIL VIEW -->
+    <section id="detailView" class="hide">
+      <div class="card">
+        <div class="card-h">
+          <div>
+            <div class="card-title" id="detailTitle">Untitled bid</div>
+            <div class="muted" style="font-size:12px; margin-top:4px;" id="detailMeta"></div>
+            <div class="pillbar" id="detailTags" style="margin-top:8px;"></div>
+          </div>
+          <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end;">
+            <button id="doneBtn" class="btn" type="button">Done</button>
+            <button id="deleteBtn" class="btn danger" type="button">Delete</button>
+          </div>
+        </div>
+
+        <div class="card-inner">
+          <div class="grid-3">
+            <div class="card"><div class="card-inner">
+              <div class="kpi-label">Stage</div>
+              <div id="detailKpiStage" class="kpi-value" style="font-size:22px;">Qualification</div>
+              <div id="detailKpiUpdated" class="kpi-hint"></div>
+            </div></div>
+            <div class="card"><div class="card-inner">
+              <div class="kpi-label">Due date</div>
+              <div id="detailKpiDue" class="kpi-value" style="font-size:22px;">–</div>
+            </div></div>
+            <div class="card"><div class="card-inner">
+              <div class="kpi-label">Est. value</div>
+              <div id="detailKpiValue" class="kpi-value" style="font-size:22px;">–</div>
+            </div></div>
+          </div>
+        </div>
+
+        <div class="tabs">
+          <button class="tab active" data-tab="overview" type="button">Overview</button>
+          <button class="tab" data-tab="requirements" type="button">Requirements</button>
+          <button class="tab" data-tab="solution" type="button">Solution</button>
+          <button class="tab" data-tab="delivery" type="button">Delivery</button>
+        </div>
+
+        <div id="tab-overview" class="detail-grid">
+          <div class="field"><label>Bid title</label><input id="f_title" /></div>
+          <div class="field"><label>Client</label><input id="f_client" /></div>
+          <div class="field"><label>Opportunity / RFP ID</label><input id="f_opportunityId" /></div>
+          <div class="field"><label>Owner</label><input id="f_owner" /></div>
+          <div class="field"><label>Stage</label><select id="f_stage"></select></div>
+          <div class="field"><label>Status</label><select id="f_status"></select></div>
+          <div class="field"><label>Due date</label><input id="f_dueDate" type="date" /></div>
+          <div class="field"><label>Submitted date</label><input id="f_submittedDate" type="date" /></div>
+          <div class="field"><label>Decision date</label><input id="f_decisionDate" type="date" /></div>
+          <div class="field"><label>Est. value (AUD)</label><input id="f_valueAud" inputmode="numeric" placeholder="450000" /></div>
+          <div class="field"><label>Win probability (%)</label><input id="f_probability" inputmode="numeric" placeholder="0 to 100" /></div>
+          <div class="field"><label>Tags (comma-separated)</label><input id="f_tagsCsv" placeholder="RFP, SuccessFactors, Managed Services" /></div>
+          <div class="field" style="grid-column:1 / -1;"><label>Scope summary</label><textarea id="f_scope" rows="6"></textarea></div>
+          <div class="field" style="grid-column:1 / -1;"><label>Notes</label><textarea id="f_notes" rows="6"></textarea></div>
+        </div>
+
+        <div id="tab-requirements" class="detail-grid hide">
+          <div class="field" style="grid-column:1 / -1;"><label>Requirements</label><textarea id="f_requirements" rows="10"></textarea></div>
+          <div class="field"><label>Assumptions</label><textarea id="f_assumptions" rows="6"></textarea></div>
+          <div class="field"><label>Dependencies</label><textarea id="f_dependencies" rows="6"></textarea></div>
+          <div class="field" style="grid-column:1 / -1;"><label>Risks</label><textarea id="f_risks" rows="6"></textarea></div>
+        </div>
+
+        <div id="tab-solution" class="detail-grid hide">
+          <div class="field" style="grid-column:1 / -1;"><label>Differentiators</label><textarea id="f_differentiators" rows="10"></textarea></div>
+          <div class="field"><label>Commercials</label><textarea id="f_commercials" rows="6"></textarea></div>
+          <div class="field"><label>Competitor notes</label><textarea id="f_competitorNotes" rows="6"></textarea></div>
+        </div>
+
+        <div id="tab-delivery" class="detail-grid hide">
+          <div class="field"><label>Stakeholders</label><textarea id="f_stakeholders" rows="8"></textarea></div>
+          <div class="field"><label>Resourcing</label><textarea id="f_resourcing" rows="6"></textarea></div>
+          <div class="field" style="grid-column:1 / -1;"><label>Next steps</label><textarea id="f_nextSteps" rows="6"></textarea></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- IMPORT MODAL -->
+  <div id="importModal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="importTitle">
+    <div class="modal">
+      <div class="card-h">
+        <div>
+          <div id="importTitle" class="card-title">Import JSON</div>
+          <div class="muted" style="font-size:12px; margin-top:4px;">
+            Paste a previously exported BidHub JSON file. This will merge into your current data (dedupe by Title + Client).
+          </div>
+        </div>
+        <button id="importClose" class="btn" type="button">Close</button>
+      </div>
+      <div class="content">
+        <div class="field">
+          <label for="importText">JSON</label>
+          <textarea id="importText" rows="12" placeholder='{
+  "version": 1,
+  "bids": [
+    {
+      "title": "Example bid",
+      "client": "Example client"
+    }
+  ]
+}'></textarea>
+          <div id="importError" class="muted" style="margin-top:8px; color:var(--danger);"></div>
+        </div>
+        <div style="display:flex; gap:10px; justify-content:flex-end; margin-top:10px;">
+          <button id="importCancel" class="btn" type="button">Cancel</button>
+          <button id="importDo" class="btn primary" type="button">Import</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    (function(){
+      "use strict";
+
+      const STORAGE_KEY = "bidhub.v1";
+
+      const STAGES = [
+        "Qualification",
+        "RFP Received",
+        "Solutioning",
+        "Pricing",
+        "Writing",
+        "Review",
+        "Submission",
+        "Negotiation",
+        "Awarded",
+        "Lost",
+        "Withdrawn",
+      ];
+
+      const STATUSES = ["In progress", "Closed"];
+
+      const DEFAULT_BID = {
+        id: "",
+        title: "",
+        client: "",
+        opportunityId: "",
+        owner: "",
+        stage: "Qualification",
+        status: "In progress",
+        dueDate: "",
+        submittedDate: "",
+        decisionDate: "",
+        valueAud: "",
+        probability: "50",
+        scope: "",
+        requirements: "",
+        assumptions: "",
+        dependencies: "",
+        risks: "",
+        stakeholders: "",
+        resourcing: "",
+        commercials: "",
+        differentiators: "",
+        competitorNotes: "",
+        nextSteps: "",
+        notes: "",
+        tagsCsv: "",
+        createdAt: "",
+        updatedAt: "",
+      };
+
+      function uid(){
+        return Math.random().toString(36).slice(2, 10) + "_" + Date.now().toString(36);
+      }
+
+      function clone(obj){
+        return JSON.parse(JSON.stringify(obj));
+      }
+
+      function todayISO(){
+        const d = new Date();
+        const yyyy = d.getFullYear();
+        const mm = String(d.getMonth() + 1).padStart(2, "0");
+        const dd = String(d.getDate()).padStart(2, "0");
+        return `${yyyy}-${mm}-${dd}`;
+      }
+
+      function currencyFormatAUD(value){
+        if (!value) return "";
+        const num = Number(value);
+        if (Number.isNaN(num)) return String(value);
+        try {
+          return new Intl.NumberFormat("en-AU", {
+            style: "currency",
+            currency: "AUD",
+            maximumFractionDigits: 0,
+          }).format(num);
+        } catch {
+          return String(value);
+        }
+      }
+
+      function scoreBadge(probability){
+        const p = Number(probability);
+        if (Number.isNaN(p)) return "";
+        if (p >= 70) return "High";
+        if (p >= 40) return "Medium";
+        return "Low";
+      }
+
+      function toTagsArray(text){
+        return (text || "").split(",").map(t => t.trim()).filter(Boolean);
+      }
+
+      function safeParseJSON(text){
+        try { return { ok:true, value: JSON.parse(text) }; }
+        catch (e) { return { ok:false, error:e }; }
+      }
+
+      function loadState(){
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return null;
+        const parsed = safeParseJSON(raw);
+        if (!parsed.ok) return null;
+        return parsed.value;
+      }
+
+      function saveState(state){
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      }
+
+      function initialSeed(){
+        const now = new Date().toISOString();
+        return {
+          version: 1,
+          bids: [
+            {
+              ...clone(DEFAULT_BID),
+              id: uid(),
+              title: "Example: People Digital Optimisation",
+              client: "Lion",
+              opportunityId: "RFP-2026-001",
+              owner: "Dirk Grobler",
+              stage: "Writing",
+              status: "In progress",
+              dueDate: todayISO(),
+              valueAud: "450000",
+              probability: "60",
+              scope: "Stream 1: Learning, Stream 2: People Experience Optimisation, Stream 3: Payroll Enhancements.",
+              requirements: "Capture bid requirements and trace them to solution and response sections.",
+              differentiators: "EPI-USE Labs tooling, existing relationship, pragmatic delivery model.",
+              nextSteps: "Confirm resourcing model and finalise pricing.",
+              tagsCsv: "SuccessFactors, RFP, Managed Services",
+              createdAt: now,
+              updatedAt: now,
+            },
+            {
+              ...clone(DEFAULT_BID),
+              id: uid(),
+              title: "Example: HR Platform Refresh",
+              client: "Example Client",
+              opportunityId: "OPP-1024",
+              owner: "Team",
+              stage: "Lost",
+              status: "Closed",
+              notes: "Closed example bid. You can delete this sample data anytime.",
+              probability: "0",
+              createdAt: now,
+              updatedAt: now,
+            }
+          ],
+          ui: { lastSelectedBidId: "" }
+        };
+      }
+
+      // Merge imports: dedupe by Title + Client (case and whitespace insensitive)
+      function normaliseKey(v){
+        return String(v || "").trim().replace(/\s+/g, " ").toLowerCase();
+      }
+      function bidKey(b){
+        return `${normaliseKey(b.title)}||${normaliseKey(b.client)}`;
+      }
+      function isPresent(v){
+        return v !== undefined && v !== null && String(v) !== "";
+      }
+
+      function mergeImport(existingBids, importedBids){
+        const now = new Date().toISOString();
+
+        const importedNormalised = (importedBids || []).map(b => {
+          const id = b.id || uid();
+          return {
+            ...clone(DEFAULT_BID),
+            ...b,
+            id,
+            createdAt: b.createdAt || now,
+            updatedAt: b.updatedAt || now,
+          };
+        });
+
+        const existingByKey = new Map();
+        for (const b of existingBids) existingByKey.set(bidKey(b), b);
+
+        const mergedExistingById = new Map(existingBids.map(b => [b.id, b]));
+        const newOnes = [];
+
+        for (const incoming of importedNormalised){
+          const key = bidKey(incoming);
+          const match = existingByKey.get(key);
+
+          if (match){
+            const merged = { ...match };
+            for (const k of Object.keys(DEFAULT_BID)){
+              if (k === "id") continue;
+              if (k === "createdAt"){
+                merged.createdAt = match.createdAt || incoming.createdAt || now;
+                continue;
+              }
+              if (isPresent(incoming[k])) merged[k] = incoming[k];
+            }
+            merged.id = match.id;
+            merged.updatedAt = now;
+            mergedExistingById.set(match.id, merged);
+          } else {
+            newOnes.push({
+              ...incoming,
+              createdAt: incoming.createdAt || now,
+              updatedAt: now,
+            });
+          }
+        }
+
+        const mergedExisting = Array.from(mergedExistingById.values());
+        return [...newOnes, ...mergedExisting];
+      }
+
+      function daysUntil(isoDate){
+        if (!isoDate) return null;
+        const due = new Date(isoDate + "T00:00:00");
+        const now = new Date();
+        return Math.ceil((due.getTime() - now.getTime()) / (1000*60*60*24));
+      }
+
+      function toast(msg){
+        const el = document.getElementById("toast");
+        el.textContent = msg;
+        el.classList.add("show");
+        window.clearTimeout(toast._t);
+        toast._t = window.setTimeout(() => el.classList.remove("show"), 2200);
+      }
+
+      // --- State ---
+      let state = loadState() || initialSeed();
+      let route = { name: "list", bidId: "" };
+      let activeTab = "overview";
+
+      // --- Elements ---
+      const listView = document.getElementById("listView");
+      const detailView = document.getElementById("detailView");
+
+      const backBtn = document.getElementById("backBtn");
+      const newBtn = document.getElementById("newBtn");
+      const exportBtn = document.getElementById("exportBtn");
+      const importBtn = document.getElementById("importBtn");
+      const clearBtn = document.getElementById("clearBtn");
+
+      const qEl = document.getElementById("q");
+      const statusEl = document.getElementById("status");
+      const stageEl = document.getElementById("stage");
+      const ownerEl = document.getElementById("owner");
+      const tagEl = document.getElementById("tag");
+      const sortEl = document.getElementById("sort");
+
+      const bidRowsEl = document.getElementById("bidRows");
+      const showCountEl = document.getElementById("showCount");
+      const totalCountEl = document.getElementById("totalCount");
+
+      const kpiInProgress = document.getElementById("kpiInProgress");
+      const kpiClosed = document.getElementById("kpiClosed");
+      const kpiDueSoon = document.getElementById("kpiDueSoon");
+
+      const doneBtn = document.getElementById("doneBtn");
+      const deleteBtn = document.getElementById("deleteBtn");
+
+      const detailTitleEl = document.getElementById("detailTitle");
+      const detailMetaEl = document.getElementById("detailMeta");
+      const detailTagsEl = document.getElementById("detailTags");
+      const detailKpiStage = document.getElementById("detailKpiStage");
+      const detailKpiUpdated = document.getElementById("detailKpiUpdated");
+      const detailKpiDue = document.getElementById("detailKpiDue");
+      const detailKpiValue = document.getElementById("detailKpiValue");
+
+      const tabs = Array.from(document.querySelectorAll(".tab"));
+
+      const f = {
+        title: document.getElementById("f_title"),
+        client: document.getElementById("f_client"),
+        opportunityId: document.getElementById("f_opportunityId"),
+        owner: document.getElementById("f_owner"),
+        stage: document.getElementById("f_stage"),
+        status: document.getElementById("f_status"),
+        dueDate: document.getElementById("f_dueDate"),
+        submittedDate: document.getElementById("f_submittedDate"),
+        decisionDate: document.getElementById("f_decisionDate"),
+        valueAud: document.getElementById("f_valueAud"),
+        probability: document.getElementById("f_probability"),
+        tagsCsv: document.getElementById("f_tagsCsv"),
+        scope: document.getElementById("f_scope"),
+        notes: document.getElementById("f_notes"),
+
+        requirements: document.getElementById("f_requirements"),
+        assumptions: document.getElementById("f_assumptions"),
+        dependencies: document.getElementById("f_dependencies"),
+        risks: document.getElementById("f_risks"),
+
+        differentiators: document.getElementById("f_differentiators"),
+        commercials: document.getElementById("f_commercials"),
+        competitorNotes: document.getElementById("f_competitorNotes"),
+
+        stakeholders: document.getElementById("f_stakeholders"),
+        resourcing: document.getElementById("f_resourcing"),
+        nextSteps: document.getElementById("f_nextSteps"),
+      };
+
+      const importModal = document.getElementById("importModal");
+      const importClose = document.getElementById("importClose");
+      const importCancel = document.getElementById("importCancel");
+      const importDo = document.getElementById("importDo");
+      const importText = document.getElementById("importText");
+      const importError = document.getElementById("importError");
+
+      // --- Rendering helpers ---
+      function setOptions(selectEl, options, { includeAll=false, allLabel="All" } = {}){
+        selectEl.innerHTML = "";
+        if (includeAll){
+          const o = document.createElement("option");
+          o.value = "all";
+          o.textContent = allLabel;
+          selectEl.appendChild(o);
+        }
+        for (const v of options){
+          const o = document.createElement("option");
+          o.value = v;
+          o.textContent = v;
+          selectEl.appendChild(o);
+        }
+      }
+
+      function getBids(){
+        return state.bids || [];
+      }
+
+      function currentBid(){
+        const bids = getBids();
+        return bids.find(b => b.id === route.bidId) || null;
+      }
+
+      function setRoute(next){
+        route = next;
+        state.ui = state.ui || { lastSelectedBidId: "" };
+        if (route.name === "detail") state.ui.lastSelectedBidId = route.bidId;
+        saveState(state);
+        render();
+      }
+
+      function updateBid(nextBid){
+        const now = new Date().toISOString();
+        nextBid.updatedAt = now;
+        state.bids = getBids().map(b => b.id === nextBid.id ? nextBid : b);
+        saveState(state);
+        renderDetailHeader();
+      }
+
+      function renderKPIs(){
+        const bids = getBids();
+        const inProgress = bids.filter(b => b.status === "In progress").length;
+        const closed = bids.filter(b => b.status === "Closed").length;
+        const dueSoon = bids.filter(b => {
+          if (b.status !== "In progress") return false;
+          const d = daysUntil(b.dueDate);
+          return d !== null && d >= 0 && d <= 14;
+        }).length;
+
+        kpiInProgress.textContent = String(inProgress);
+        kpiClosed.textContent = String(closed);
+        kpiDueSoon.textContent = String(dueSoon);
+      }
+
+      function filteredRows(){
+        const bids = getBids();
+        const q = String(qEl.value || "").trim().toLowerCase();
+        const status = statusEl.value;
+        const stage = stageEl.value;
+        const owner = ownerEl.value;
+        const tag = tagEl.value;
+        const sort = sortEl.value;
+
+        let rows = bids.filter(b => {
+          const hay = [
+            b.title,
+            b.client,
+            b.opportunityId,
+            b.owner,
+            b.stage,
+            b.status,
+            b.scope,
+            b.requirements,
+            b.notes,
+            b.tagsCsv,
+          ].filter(Boolean).join(" | ").toLowerCase();
+
+          if (q && !hay.includes(q)) return false;
+          if (status !== "all" && b.status !== status) return false;
+          if (stage !== "all" && b.stage !== stage) return false;
+          if (owner !== "all" && String(b.owner || "").trim() !== owner) return false;
+
+          if (tag !== "any"){
+            const tags = toTagsArray(b.tagsCsv).map(x => x.toLowerCase());
+            if (!tags.includes(String(tag || "").toLowerCase())) return false;
+          }
+          return true;
+        });
+
+        rows = rows.slice();
+        rows.sort((a,b) => {
+          if (sort === "updated_desc") return String(b.updatedAt||"").localeCompare(String(a.updatedAt||""));
+          if (sort === "updated_asc") return String(a.updatedAt||"").localeCompare(String(b.updatedAt||""));
+          if (sort === "due_asc") return String(a.dueDate||"").localeCompare(String(b.dueDate||""));
+          if (sort === "value_desc") return Number(b.valueAud||0) - Number(a.valueAud||0);
+          return 0;
+        });
+
+        return rows;
+      }
+
+      function renderListFilters(){
+        const bids = getBids();
+
+        // status options
+        setOptions(statusEl, STATUSES, { includeAll:true, allLabel:"All statuses" });
+        if (!statusEl.value) statusEl.value = "all";
+
+        // stage options
+        setOptions(stageEl, STAGES, { includeAll:true, allLabel:"All stages" });
+        if (!stageEl.value) stageEl.value = "all";
+
+        // owner options
+        const owners = Array.from(new Set(bids.map(b => String(b.owner||"").trim()).filter(Boolean))).sort((a,b) => a.localeCompare(b));
+        setOptions(ownerEl, owners, { includeAll:true, allLabel:"All owners" });
+        if (!ownerEl.value) ownerEl.value = "all";
+
+        // tag options
+        const allTags = Array.from(new Set(bids.flatMap(b => toTagsArray(b.tagsCsv)))).sort((a,b) => a.localeCompare(b));
+        tagEl.innerHTML = "";
+        {
+          const o = document.createElement("option");
+          o.value = "any";
+          o.textContent = "Any tag";
+          tagEl.appendChild(o);
+        }
+        for (const t of allTags){
+          const o = document.createElement("option");
+          o.value = t;
+          o.textContent = t;
+          tagEl.appendChild(o);
+        }
+        if (!tagEl.value) tagEl.value = "any";
+
+        totalCountEl.textContent = String(bids.length);
+      }
+
+      function renderListTable(){
+        const bids = getBids();
+        const rows = filteredRows();
+
+        showCountEl.textContent = String(rows.length);
+
+        if (bids.length === 0){
+          bidRowsEl.innerHTML = `<tr><td colspan="6" class="muted" style="padding:26px; text-align:center;">No bids yet. Click New bid to get started.</td></tr>`;
+          return;
+        }
+
+        if (rows.length === 0){
+          bidRowsEl.innerHTML = `<tr><td colspan="6" class="muted" style="padding:26px; text-align:center;">No bids match your filters.</td></tr>`;
+          return;
+        }
+
+        bidRowsEl.innerHTML = "";
+
+        for (const b of rows){
+          const tr = document.createElement("tr");
+          tr.className = "rowlink";
+          tr.addEventListener("click", () => setRoute({ name:"detail", bidId:b.id }));
+
+          const tags = toTagsArray(b.tagsCsv);
+          const win = scoreBadge(b.probability);
+
+          const bidCell = document.createElement("td");
+          bidCell.innerHTML = `
+            <div style="display:flex; flex-direction:column; gap:6px;">
+              <div style="font-weight:700;">${escapeHtml(b.title || "Untitled bid")}</div>
+              <div class="muted" style="font-size:12px;">
+                ${b.opportunityId ? `ID: ${escapeHtml(b.opportunityId)}` : ""}
+                ${b.owner ? `${b.opportunityId ? " • " : ""}${escapeHtml(b.owner)}` : ""}
+              </div>
+              <div class="pillbar">
+                ${win ? `<span class="badge secondary">Win: ${escapeHtml(win)}</span>` : ""}
+                ${tags.slice(0,3).map(t => `<span class="badge">${escapeHtml(t)}</span>`).join("")}
+                ${tags.length > 3 ? `<span class="badge">+${tags.length - 3}</span>` : ""}
+              </div>
+            </div>
+          `;
+
+          const clientCell = document.createElement("td");
+          clientCell.textContent = b.client || "";
+
+          const stageCell = document.createElement("td");
+          stageCell.textContent = b.stage || "";
+
+          const statusCell = document.createElement("td");
+          statusCell.innerHTML = `<span class="badge ${b.status === "Closed" ? "secondary" : ""}">${escapeHtml(b.status || "")}</span>`;
+
+          const dueCell = document.createElement("td");
+          dueCell.textContent = b.dueDate || "–";
+          dueCell.className = b.dueDate ? "" : "muted";
+
+          const valueCell = document.createElement("td");
+          valueCell.className = "right";
+          valueCell.textContent = b.valueAud ? currencyFormatAUD(b.valueAud) : "–";
+          if (!b.valueAud) valueCell.classList.add("muted");
+
+          tr.appendChild(bidCell);
+          tr.appendChild(clientCell);
+          tr.appendChild(stageCell);
+          tr.appendChild(statusCell);
+          tr.appendChild(dueCell);
+          tr.appendChild(valueCell);
+
+          bidRowsEl.appendChild(tr);
+        }
+      }
+
+      function renderDetailHeader(){
+        const b = currentBid();
+        if (!b) return;
+
+        detailTitleEl.textContent = b.title || "Untitled bid";
+
+        const parts = [];
+        if (b.client) parts.push(b.client);
+        if (b.opportunityId) parts.push(b.opportunityId);
+        if (b.owner) parts.push(`Owner: ${b.owner}`);
+        detailMetaEl.textContent = parts.join(" • ");
+
+        detailKpiStage.textContent = b.stage || "–";
+        detailKpiDue.textContent = b.dueDate || "–";
+        detailKpiValue.textContent = b.valueAud ? currencyFormatAUD(b.valueAud) : "–";
+
+        if (b.updatedAt){
+          const dt = new Date(b.updatedAt);
+          detailKpiUpdated.textContent = `Updated ${dt.toLocaleString()}`;
+        } else {
+          detailKpiUpdated.textContent = "";
+        }
+
+        // tags
+        detailTagsEl.innerHTML = "";
+        const tags = toTagsArray(b.tagsCsv);
+        const win = scoreBadge(b.probability);
+
+        const statusBadge = document.createElement("span");
+        statusBadge.className = `badge ${b.status === "Closed" ? "secondary" : ""}`;
+        statusBadge.textContent = b.status || "";
+        detailTagsEl.appendChild(statusBadge);
+
+        if (win){
+          const winBadge = document.createElement("span");
+          winBadge.className = "badge secondary";
+          winBadge.textContent = `Win: ${win}`;
+          detailTagsEl.appendChild(winBadge);
+        }
+
+        for (const t of tags){
+          const el = document.createElement("span");
+          el.className = "badge secondary";
+          el.textContent = t;
+          detailTagsEl.appendChild(el);
+        }
+      }
+
+      function renderDetailForm(){
+        const b = currentBid();
+        if (!b) return;
+
+        f.title.value = b.title || "";
+        f.client.value = b.client || "";
+        f.opportunityId.value = b.opportunityId || "";
+        f.owner.value = b.owner || "";
+        f.stage.value = b.stage || "Qualification";
+        f.status.value = b.status || "In progress";
+        f.dueDate.value = b.dueDate || "";
+        f.submittedDate.value = b.submittedDate || "";
+        f.decisionDate.value = b.decisionDate || "";
+        f.valueAud.value = b.valueAud || "";
+        f.probability.value = b.probability || "50";
+        f.tagsCsv.value = b.tagsCsv || "";
+        f.scope.value = b.scope || "";
+        f.notes.value = b.notes || "";
+
+        f.requirements.value = b.requirements || "";
+        f.assumptions.value = b.assumptions || "";
+        f.dependencies.value = b.dependencies || "";
+        f.risks.value = b.risks || "";
+
+        f.differentiators.value = b.differentiators || "";
+        f.commercials.value = b.commercials || "";
+        f.competitorNotes.value = b.competitorNotes || "";
+
+        f.stakeholders.value = b.stakeholders || "";
+        f.resourcing.value = b.resourcing || "";
+        f.nextSteps.value = b.nextSteps || "";
+      }
+
+      function setActiveTab(tabName){
+        activeTab = tabName;
+        for (const t of tabs){
+          t.classList.toggle("active", t.dataset.tab === tabName);
+        }
+        document.getElementById("tab-overview").classList.toggle("hide", tabName !== "overview");
+        document.getElementById("tab-requirements").classList.toggle("hide", tabName !== "requirements");
+        document.getElementById("tab-solution").classList.toggle("hide", tabName !== "solution");
+        document.getElementById("tab-delivery").classList.toggle("hide", tabName !== "delivery");
+      }
+
+      function render(){
+        const isDetail = route.name === "detail";
+
+        listView.classList.toggle("hide", isDetail);
+        detailView.classList.toggle("hide", !isDetail);
+        backBtn.classList.toggle("hide", !isDetail);
+
+        renderKPIs();
+        renderListFilters();
+        renderListTable();
+
+        if (isDetail){
+          // populate stage/status options on detail selects
+          setOptions(f.stage, STAGES);
+          setOptions(f.status, STATUSES);
+
+          setActiveTab(activeTab);
+          renderDetailHeader();
+          renderDetailForm();
+        }
+      }
+
+      // --- Events ---
+      backBtn.addEventListener("click", () => setRoute({ name:"list", bidId:"" }));
+      document.getElementById("doneBtn").addEventListener("click", () => setRoute({ name:"list", bidId:"" }));
+
+      newBtn.addEventListener("click", () => {
+        const now = new Date().toISOString();
+        const newBid = {
+          ...clone(DEFAULT_BID),
+          id: uid(),
+          title: "New bid",
+          stage: "Qualification",
+          status: "In progress",
+          probability: "50",
+          createdAt: now,
+          updatedAt: now,
+        };
+        state.bids = [newBid, ...getBids()];
+        saveState(state);
+        toast("Created new bid");
+        setRoute({ name:"detail", bidId:newBid.id });
+      });
+
+      deleteBtn.addEventListener("click", () => {
+        const b = currentBid();
+        if (!b) return;
+        const ok = window.confirm("Delete this bid? This cannot be undone.");
+        if (!ok) return;
+        state.bids = getBids().filter(x => x.id !== b.id);
+        saveState(state);
+        toast("Bid deleted");
+        setRoute({ name:"list", bidId:"" });
+      });
+
+      exportBtn.addEventListener("click", () => {
+        const payload = JSON.stringify(state, null, 2);
+        const blob = new Blob([payload], { type:"application/json" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `bidhub-export-${new Date().toISOString().slice(0,10)}.json`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+        toast("Exported JSON");
+      });
+
+      clearBtn.addEventListener("click", () => {
+        const ok = window.confirm("Clear all BidHub data from this browser? Make sure you exported a backup first.");
+        if (!ok) return;
+        const seeded = initialSeed();
+        seeded.bids = [];
+        state = seeded;
+        saveState(state);
+        toast("Cleared all data");
+        setRoute({ name:"list", bidId:"" });
+      });
+
+      function openImport(){
+        importError.textContent = "";
+        importText.value = "";
+        importModal.style.display = "flex";
+        setTimeout(() => importText.focus(), 0);
+      }
+      function closeImport(){
+        importModal.style.display = "none";
+      }
+
+      importBtn.addEventListener("click", openImport);
+      importClose.addEventListener("click", closeImport);
+      importCancel.addEventListener("click", closeImport);
+      importModal.addEventListener("click", (e) => {
+        if (e.target === importModal) closeImport();
+      });
+
+      importDo.addEventListener("click", () => {
+        importError.textContent = "";
+        const parsed = safeParseJSON(importText.value);
+        if (!parsed.ok){
+          importError.textContent = "That does not look like valid JSON.";
+          return;
+        }
+        const data = parsed.value;
+        if (!data || typeof data !== "object" || !Array.isArray(data.bids)){
+          importError.textContent = "JSON must contain a 'bids' array.";
+          return;
+        }
+
+        const merged = mergeImport(getBids(), data.bids);
+        state = { version: 1, bids: merged, ui: { lastSelectedBidId: "" } };
+        saveState(state);
+        closeImport();
+        toast("Imported and merged");
+        setRoute({ name:"list", bidId:"" });
+      });
+
+      // Filters
+      for (const el of [qEl, statusEl, stageEl, ownerEl, tagEl, sortEl]){
+        el.addEventListener("input", () => renderListTable());
+        el.addEventListener("change", () => renderListTable());
+      }
+
+      // Tabs
+      for (const t of tabs){
+        t.addEventListener("click", () => setActiveTab(t.dataset.tab));
+      }
+
+      // Detail field bindings
+      const fieldMap = [
+        ["title", f.title],
+        ["client", f.client],
+        ["opportunityId", f.opportunityId],
+        ["owner", f.owner],
+        ["stage", f.stage],
+        ["status", f.status],
+        ["dueDate", f.dueDate],
+        ["submittedDate", f.submittedDate],
+        ["decisionDate", f.decisionDate],
+        ["tagsCsv", f.tagsCsv],
+        ["scope", f.scope],
+        ["notes", f.notes],
+        ["requirements", f.requirements],
+        ["assumptions", f.assumptions],
+        ["dependencies", f.dependencies],
+        ["risks", f.risks],
+        ["differentiators", f.differentiators],
+        ["commercials", f.commercials],
+        ["competitorNotes", f.competitorNotes],
+        ["stakeholders", f.stakeholders],
+        ["resourcing", f.resourcing],
+        ["nextSteps", f.nextSteps],
+      ];
+
+      for (const [key, el] of fieldMap){
+        el.addEventListener("input", () => {
+          const b = currentBid();
+          if (!b) return;
+          const next = { ...b };
+          next[key] = el.value;
+          updateBid(next);
+          renderDetailForm();
+        });
+      }
+
+      // Numeric guarding
+      f.valueAud.addEventListener("input", () => {
+        f.valueAud.value = String(f.valueAud.value || "").replace(/[^0-9]/g, "");
+      });
+
+      f.probability.addEventListener("input", () => {
+        const raw = String(f.probability.value || "").replace(/[^0-9]/g, "");
+        const n = Math.max(0, Math.min(100, Number(raw || 0)));
+        f.probability.value = String(n);
+      });
+
+      // Escaping for table HTML snippets
+      function escapeHtml(s){
+        return String(s)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/\"/g, "&quot;")
+          .replace(/'/g, "&#039;");
+      }
+
+      // Basic dev self-tests
+      (function devTests(){
+        try {
+          console.assert(scoreBadge("75") === "High", "scoreBadge 75");
+          console.assert(scoreBadge("50") === "Medium", "scoreBadge 50");
+          console.assert(scoreBadge("10") === "Low", "scoreBadge 10");
+
+          const tags = toTagsArray(" RFP, SuccessFactors , , Managed Services ");
+          console.assert(tags.length === 3, "toTagsArray length");
+          console.assert(tags[0] === "RFP", "toTagsArray trim");
+
+          console.assert(
+            bidKey({ title: "  Project   Alpha ", client: "ACME" }) === bidKey({ title:"project alpha", client:"Acme" }),
+            "merge key normalisation"
+          );
+
+          const ex = [{ ...clone(DEFAULT_BID), id:"id1", title:"Project Alpha", client:"Acme", notes:"keep", stage:"Qualification", createdAt:"x", updatedAt:"x" }];
+          const im = [{ title:"  project   alpha ", client:"ACME", stage:"Writing", notes:"" }];
+          const merged = mergeImport(ex, im);
+          const m = merged.find(x => x.id === "id1");
+          console.assert(m.stage === "Writing", "merge overwrites non-empty");
+          console.assert(m.notes === "keep", "merge does not overwrite empty");
+        } catch {}
+      })();
+
+      // Initial render
+      render();
+
+      // If there was a last selected bid, you can auto-resume detail view if desired.
+      // Keeping list as default for clarity.
+
+    })();
+  </script>
+
+  <div class="footer">
+    <div style="height:1px; background:var(--border); margin:18px 0;"></div>
+    <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:space-between;">
+      <div>
+        BidHub stores data locally in your browser. For shared team data, add a small hosted database later.
+      </div>
+      <div>Version 1 (single-file)</div>
+    </div>
+  </div>
+</body>
+</html>
