@@ -105,7 +105,7 @@ export const DEFAULT_BID = {
   updatedAt: "",
 };
 
-export const QUALIFICATION_QUESTIONS = {
+export const QUAL_QUESTIONS = {
   critical: [
     "Has the client expressed clear commitment to the project timeline and scope?",
     "Are key stakeholders (Executive Leadership Team) actively engaged in the process?",
