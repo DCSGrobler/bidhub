@@ -136,3 +136,4 @@ export const QUAL_QUESTIONS = {
     "Is this an EPI-USE led opportunity (not SAP)?",
     "Is this a People Solutions opportunity?",
     "Is this response a prerequisite for further shortlisting?",
+    };
