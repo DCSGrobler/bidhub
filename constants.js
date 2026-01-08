@@ -152,4 +152,7 @@ export const QUAL_QUESTIONS = {
     "Is there potential to upsell our services?",
     "Is the project scalable for future phases?",
     "Will it strengthen our position in a key market or industry?",
-    "Can this project u
+    "Can this project unlock future opportunities?",
+    "Does this align with our strategic growth objectives?",
+  ],
+};
