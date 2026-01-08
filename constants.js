@@ -1,5 +1,7 @@
+// Storage
 export const STORAGE_KEY = "bidhub.v2";
 
+// Stages
 export const STAGES = [
   "RFP Received",
   "Qualification",
@@ -12,14 +14,20 @@ export const STAGES = [
   "Withdrawn",
 ];
 
-export const CLOSED_STAGES = new Set(["Awarded", "Lost", "Withdrawn"]);
+// Closed stages (array for includes checks)
+export const CLOSED_STAGES = ["Awarded", "Lost", "Withdrawn"];
 
+// Optional Set form if needed elsewhere
+export const CLOSED_STAGE_SET = new Set(CLOSED_STAGES);
+
+// Delivery status (RAG)
 export const DELIVERY_STATUSES = [
   { value: "onTrack", label: "On Track", rag: "green" },
   { value: "atRisk", label: "At Risk", rag: "amber" },
   { value: "behind", label: "Behind Schedule", rag: "red" },
 ];
 
+// Scope options (grouped)
 export const DEFAULT_SCOPE_OPTIONS = [
   {
     group: "SAP SuccessFactors",
@@ -59,6 +67,7 @@ export const DEFAULT_SCOPE_OPTIONS = [
   },
 ];
 
+// Differentiator options
 export const DEFAULT_DIFFERENTIATOR_OPTIONS = [
   "Client track record",
   "Payroll expertise",
@@ -71,12 +80,17 @@ export const DEFAULT_DIFFERENTIATOR_OPTIONS = [
   "Security and compliance focus",
 ];
 
+// Aliases to match app.js imports
+export const SCOPE_OPTIONS = DEFAULT_SCOPE_OPTIONS;
+export const DIFFERENTIATOR_OPTIONS = DEFAULT_DIFFERENTIATOR_OPTIONS;
+
+// Default bid model
 export const DEFAULT_BID = {
   id: "",
   bidNumber: "",
   title: "",
   client: "",
-  clientRef: "", // old 'opportunityId'
+  clientRef: "",
   owner: "",
   stage: "RFP Received",
   deliveryStatus: "onTrack",
@@ -105,6 +119,7 @@ export const DEFAULT_BID = {
   updatedAt: "",
 };
 
+// Qualification questions
 export const QUAL_QUESTIONS = {
   critical: [
     "Has the client expressed clear commitment to the project timeline and scope?",
@@ -115,36 +130,9 @@ export const QUAL_QUESTIONS = {
     "Does the project pose acceptable legal, regulatory, or reputational risks?",
     "Does the project have an acceptable risk profile overall?",
     "Can we meet the proposed project timeline?",
-    "Are the commercial terms attractive?"
+    "Are the commercial terms attractive?",
   ],
   evaluation: [
     "Is this an EPI-USE led opportunity (not SAP)?",
     "Is this a People Solutions opportunity?",
     "Is this response a prerequisite for further shortlisting?",
-    "Have we worked with this client or within this industry before?",
-    "Is the client financially stable and likely to honour commitments?",
-    "Do we have prior positive relationships with this client?",
-    "Do we consider this a fair competitive landscape?",
-    "Can we differentiate ourselves effectively?",
-    "Does the project fit best practice (out of the box)?",
-    "Do we have experience with similar integration complexity?",
-    "Are the technical requirements compatible with our capabilities?",
-    "Can we meet requirements without significant custom development?",
-    "Does the client have realistic expectations?",
-    "Do we understand the budget and can we price competitively?",
-    "Is the client mature in implementing technology solutions?",
-    "Does the scope align with our core implementation strengths?",
-    "Can we mitigate the identified risks?",
-    "Will SAP assist with the response (non-functionals)?",
-    "Does the client have a good reputation?"
-  ],
-  enhanced: [
-    "Is there potential for licence revenue?",
-    "Is there potential to upsell our products?",
-    "Is there potential to upsell our services?",
-    "Is the project scalable for future phases?",
-    "Will it strengthen our position in a key market or industry?",
-    "Can this project unlock future opportunities?",
-    "Does this align with our strategic growth objectives?"
-  ]
-};
