@@ -157,3 +157,7 @@ export function bindQualificationModal({
 
   return { open, close };
 }
+// Compatibility export expected by app.js
+export function createQualificationController(args){
+  return bindQualificationModal(args);
+}
