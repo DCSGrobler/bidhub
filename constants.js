@@ -15,7 +15,11 @@ export const STAGES = [
 ];
 
 // Closed stages
-export const CLOSED_STAGES = ["Awarded", "Lost", "Withdrawn"];
+// IMPORTANT: app.js is currently calling CLOSED_STAGES.has(...), so this must be a Set.
+export const CLOSED_STAGES = new Set(["Awarded", "Lost", "Withdrawn"]);
+
+// Optional list form (handy if any code uses .includes later)
+export const CLOSED_STAGES_LIST = Array.from(CLOSED_STAGES);
 
 // Delivery status (RAG)
 export const DELIVERY_STATUSES = [
@@ -24,8 +28,8 @@ export const DELIVERY_STATUSES = [
   { value: "behind", label: "Behind Schedule", rag: "red" },
 ];
 
-// Scope options
-export const SCOPE_OPTIONS = [
+// Scope options (grouped)
+export const DEFAULT_SCOPE_OPTIONS = [
   {
     group: "SAP SuccessFactors",
     items: [
@@ -44,12 +48,7 @@ export const SCOPE_OPTIONS = [
   },
   {
     group: "EPI-USE Products",
-    items: [
-      "PRISM",
-      "Data Sync Manager",
-      "Variance Monitor",
-      "PatternFlex",
-    ],
+    items: ["PRISM", "Data Sync Manager", "Variance Monitor", "PatternFlex"],
   },
   {
     group: "Services",
@@ -64,8 +63,7 @@ export const SCOPE_OPTIONS = [
   },
 ];
 
-// Differentiators
-export const DIFFERENTIATOR_OPTIONS = [
+export const DEFAULT_DIFFERENTIATOR_OPTIONS = [
   "Client track record",
   "Payroll expertise",
   "Integration capability",
@@ -77,7 +75,11 @@ export const DIFFERENTIATOR_OPTIONS = [
   "Security and compliance focus",
 ];
 
-// Default bid
+// Aliases expected by app.js imports
+export const SCOPE_OPTIONS = DEFAULT_SCOPE_OPTIONS;
+export const DIFFERENTIATOR_OPTIONS = DEFAULT_DIFFERENTIATOR_OPTIONS;
+
+// Default bid model
 export const DEFAULT_BID = {
   id: "",
   bidNumber: "",
