@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>BidHub</title>
   <link rel="stylesheet" href="./styles.css" />
+  <link rel="icon" href="data:," />
 </head>
 <body>
   <header class="topbar">
@@ -84,7 +85,7 @@
 
           <div class="filters" style="grid-template-columns: 1fr 1fr;">
             <div class="field">
-              <label for="tag">Scope filter</label>
+              <label for="scopeFilter">Scope filter</label>
               <select id="scopeFilter"></select>
             </div>
             <div class="field" style="display:flex; align-items:flex-end; justify-content:flex-end;">
@@ -255,7 +256,8 @@
   </div>
 
   <!-- QUALIFICATION MODAL -->
-  <div id="qualModal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="qualTitle">
+  <!-- IMPORTANT: IDs aligned to JS expectations -->
+  <div id="qualificationModal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="qualTitle">
     <div class="modal modal-wide">
       <div class="card-h">
         <div>
@@ -264,15 +266,15 @@
             Capture qualification inputs to guide a proceed / caution / no-go recommendation.
           </div>
         </div>
-        <button id="qualClose" class="btn" type="button">Close</button>
+        <button id="qualCloseBtn" class="btn" type="button">Close</button>
       </div>
       <div class="content">
-        <div id="qualBody"></div>
-        <div class="sep"></div>
         <div class="q-summary" id="qualSummary"></div>
+        <div id="qualFormMount"></div>
+
         <div style="display:flex; gap:10px; justify-content:flex-end; flex-wrap:wrap; margin-top:12px;">
-          <button id="qualCancel" class="btn" type="button">Cancel</button>
-          <button id="qualSave" class="btn primary" type="button">Save qualification</button>
+          <button id="qualCancelBtn" class="btn" type="button">Cancel</button>
+          <button id="qualSaveBtn" class="btn primary" type="button">Save qualification</button>
         </div>
       </div>
     </div>
