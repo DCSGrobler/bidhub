@@ -5,14 +5,12 @@ function normaliseAnswer(a) {
 }
 
 export function scoreQualification(answers) {
-  // Critical: Yes/No
   const critical = QUAL_QUESTIONS.critical.map((q) => ({
     q,
     a: normaliseAnswer(answers.critical?.[q]),
   }));
   const criticalFailed = critical.some((x) => x.a === "No" || x.a === "");
 
-  // Evaluation: Yes / Partial / No
   const evalRows = QUAL_QUESTIONS.evaluation.map((q) => ({
     q,
     a: normaliseAnswer(answers.evaluation?.[q]),
@@ -24,7 +22,6 @@ export function scoreQualification(answers) {
   const evalMax = evalRows.length * 2;
   const evalPct = evalMax ? Math.round((evalScore / evalMax) * 100) : 0;
 
-  // Enhanced: Yes/No
   const enhancedRows = QUAL_QUESTIONS.enhanced.map((q) => ({
     q,
     a: normaliseAnswer(answers.enhanced?.[q]),
@@ -49,32 +46,57 @@ export function scoreQualification(answers) {
   };
 }
 
-export function bindQualificationModal({
-  modalEl,
-  closeBtn,
-  cancelBtn,
-  saveBtn,
-  summaryEl,
-  formMount,
-  onSave,
-}) {
+function elById(id) {
+  return id ? document.getElementById(id) : null;
+}
+
+function requiredEl(el, name) {
+  if (!el) throw new Error(`Qualification modal is missing required element: ${name}`);
+  return el;
+}
+
+/**
+ * Flexible binder:
+ * - Works whether app.js passes DOM elements or just ids or nothing.
+ * - Falls back to common ids used in index.html.
+ */
+export function bindQualificationModal(args = {}) {
+  const {
+    modalEl: modalElIn,
+    closeBtn: closeBtnIn,
+    cancelBtn: cancelBtnIn,
+    saveBtn: saveBtnIn,
+    summaryEl: summaryElIn,
+    formMount: formMountIn,
+    onSave,
+  } = args;
+
+  // Support passing ids as strings OR elements OR nothing.
+  const modalEl =
+    typeof modalElIn === "string" ? elById(modalElIn) : modalElIn || elById("qualificationModal");
+  const closeBtn =
+    typeof closeBtnIn === "string" ? elById(closeBtnIn) : closeBtnIn || elById("qualCloseBtn");
+  const cancelBtn =
+    typeof cancelBtnIn === "string" ? elById(cancelBtnIn) : cancelBtnIn || elById("qualCancelBtn");
+  const saveBtn =
+    typeof saveBtnIn === "string" ? elById(saveBtnIn) : saveBtnIn || elById("qualSaveBtn");
+  const summaryEl =
+    typeof summaryElIn === "string" ? elById(summaryElIn) : summaryElIn || elById("qualSummary");
+  const formMount =
+    typeof formMountIn === "string" ? elById(formMountIn) : formMountIn || elById("qualFormMount");
+
+  // Fail fast with a useful message if markup ids differ
+  requiredEl(modalEl, "qualificationModal");
+  requiredEl(closeBtn, "qualCloseBtn");
+  requiredEl(cancelBtn, "qualCancelBtn");
+  requiredEl(saveBtn, "qualSaveBtn");
+  requiredEl(summaryEl, "qualSummary");
+  requiredEl(formMount, "qualFormMount");
+
   const state = {
     bidId: "",
     answers: { critical: {}, evaluation: {}, enhanced: {} },
   };
-
-  function open({ bidId, initial }) {
-    state.bidId = bidId;
-    state.answers = initial || { critical: {}, evaluation: {}, enhanced: {} };
-    renderForm();
-    modalEl.style.display = "flex";
-    updateSummary();
-  }
-
-  function close() {
-    modalEl.style.display = "none";
-    state.bidId = "";
-  }
 
   function setAnswer(group, question, value) {
     state.answers[group] = state.answers[group] || {};
@@ -159,30 +181,29 @@ export function bindQualificationModal({
     grid.className = "q-grid";
 
     grid.appendChild(
-      renderSection("Critical (must-have)", "critical", QUAL_QUESTIONS.critical, [
-        "",
-        "Yes",
-        "No",
-      ])
+      renderSection("Critical (must-have)", "critical", QUAL_QUESTIONS.critical, ["", "Yes", "No"])
     );
     grid.appendChild(
-      renderSection("Evaluation", "evaluation", QUAL_QUESTIONS.evaluation, [
-        "",
-        "Yes",
-        "Partial",
-        "No",
-      ])
+      renderSection("Evaluation", "evaluation", QUAL_QUESTIONS.evaluation, ["", "Yes", "Partial", "No"])
     );
     grid.appendChild(
-      renderSection(
-        "Enhanced opportunity",
-        "enhanced",
-        QUAL_QUESTIONS.enhanced,
-        ["", "Yes", "No"]
-      )
+      renderSection("Enhanced opportunity", "enhanced", QUAL_QUESTIONS.enhanced, ["", "Yes", "No"])
     );
 
     formMount.appendChild(grid);
+  }
+
+  function open({ bidId, initial } = {}) {
+    state.bidId = bidId || "";
+    state.answers = initial || { critical: {}, evaluation: {}, enhanced: {} };
+    renderForm();
+    updateSummary();
+    modalEl.style.display = "flex";
+  }
+
+  function close() {
+    modalEl.style.display = "none";
+    state.bidId = "";
   }
 
   modalEl.addEventListener("click", (e) => {
@@ -202,8 +223,6 @@ export function bindQualificationModal({
   return { open, close };
 }
 
-// This is what app.js expects to import.
-// It also adds an onSave function so app.js will not crash if it references qual.onSave.
 export function createQualificationController(args) {
   const controller = bindQualificationModal(args);
   controller.onSave = typeof args?.onSave === "function" ? args.onSave : () => {};
